@@ -1,0 +1,50 @@
+spring:
+  jwt:
+    secret: YGj+koNr/gYY/2imQdWIvATjP75wBxVim5cLSfS80XLwxiSWYbXnXqHmEie83hL3U3rcd1XsMxZeyzqKZ6i4P7V8fy5tbN4wjY9rVGV9ZEOlaZtAepJhO6RMMk/I2OvZw3pePlrLaDn3qay0M1ykrsFr5Fo3oLaXdns2ZuJaAF4=
+
+  h2:
+    console:
+      enabled: true
+      path: /h2
+#      settings:
+#        trace: false
+#        web-allow-other: true # 브라우저에서 접근 가능하도록 설정
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+#    url: jdbc:mysql://localhost:3307/dedenjji
+#    username: kuki
+#    password: 123123
+#    url: jdbc:mysql://localhost:3307/ModooDiary
+#    username: kuki
+#    password: 123123
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        #        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
+#        order_inserts: true
+#        order_updates: true
+#    database: mysql
+#    database-platform: org.hibernate.dialect.MySQLDialect
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+logging:
+  level:
+    root: info
+#    org.hibernate.SQL: debug
+#    org.hibernate.type: trace
