@@ -3,7 +3,6 @@ package com.secondwind.prototype.api.repository;
 
 import static com.secondwind.prototype.api.domain.entity.QMember.member;
 
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.secondwind.prototype.api.domain.entity.Member;
@@ -32,10 +31,10 @@ public class MemberRepositoryImpl extends Querydsl4RepositorySupport implements
                 .where(loginIdEq(searchMember.getLoginId()),
                     nameEq(searchMember.getName())),
         countQuery ->
-            countQuery.selectFrom(member)
+            countQuery.select(member.count())
+                .from(member)
                 .where(loginIdEq(searchMember.getLoginId()),
                     nameEq(searchMember.getName())));
-
   }
 
   private BooleanExpression nameEq(String name) {
