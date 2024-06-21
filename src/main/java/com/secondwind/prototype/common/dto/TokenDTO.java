@@ -14,7 +14,7 @@ public class TokenDTO {
     private Long accessTokenExpiresIn;
     private Long refreshTokenExpiresIn;
 
-    @Builder
+    @Builder(builderClassName = "of", builderMethodName = "of")
     public TokenDTO(String grantType, String accessToken, String refreshToken, Long accessTokenExpiresIn, Long refreshTokenExpiresIn) {
         this.grantType = grantType;
         this.accessToken = accessToken;

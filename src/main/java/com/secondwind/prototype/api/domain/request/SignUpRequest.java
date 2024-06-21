@@ -24,7 +24,7 @@ public class SignUpRequest {
         this.name = name;
     }
 
-    public Member toMember(SignUpRequest signUpRequest, PasswordEncoder passwordEncoder) {
+    public static Member toMember(SignUpRequest signUpRequest, PasswordEncoder passwordEncoder) {
         return Member.of()
                 .loginId(signUpRequest.getLoginId())
                 .password(passwordEncoder.encode(signUpRequest.getPassword()))

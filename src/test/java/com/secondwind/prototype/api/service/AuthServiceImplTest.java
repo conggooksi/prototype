@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -106,7 +105,7 @@ class AuthServiceImplTest {
         .password("123")
         .build();
 
-    when(request.toMember(request, passwordEncoder)).thenThrow(ApiException.builder()
+    when(SignUpRequest.toMember(request, passwordEncoder)).thenThrow(ApiException.builder()
         .errorCode(AuthErrorCode.PASSWORD_NOT_ENOUGH_CONDITION.getCode())
         .errorMessage(AuthErrorCode.PASSWORD_NOT_ENOUGH_CONDITION.getMessage())
         .status(HttpStatus.BAD_REQUEST)

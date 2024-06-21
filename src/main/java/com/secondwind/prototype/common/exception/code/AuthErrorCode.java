@@ -4,6 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum AuthErrorCode {
+    INVALID_TOKEN("INVALID_TOKEN", "유효하지 않은 토큰입니다."),
+    NOT_MATCH_TOKEN_INFO("NOT_MATCH_TOKEN_INFO", "토큰 정보가 일치하지 않습니다."),
+    ENTERED_ID_AND_PASSWORD("ENTERED_ID_AND_PASSWORD", "아이디와 비밀번호를 입력해주세요."),
     ALREADY_JOIN_USER("ALREADY_JOIN_USER", "이미 존재하는 아이디입니다."),
     PASSWORD_NOT_ENOUGH_CONDITION("PASSWORD_NOT_ENOUGH_CONDITION","패스워드 조건을 만족하지 못했습니다."),
     ACCESS_DENIED("ACCESSDENIED", "접근 거부되었습니다."),

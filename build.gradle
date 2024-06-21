@@ -25,6 +25,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.security:spring-security-test'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -66,6 +67,9 @@ dependencies {
 
 	// h2 database
 	runtimeOnly 'com.h2database:h2'
+
+	// json parsing 위해 추가
+	implementation 'com.google.code.gson:gson:2.9.0'
 
 //	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 //	testImplementation 'org.mockito:mockito-core:2.28.2'

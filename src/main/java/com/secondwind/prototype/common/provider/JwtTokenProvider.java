@@ -59,7 +59,7 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
-        return TokenDTO.builder()
+        return TokenDTO.of()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
@@ -68,8 +68,8 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    public Authentication getAuthentication(String accessToken) {
-        Claims claims = parseClaims(accessToken);
+    public Authentication getAuthentication(String token) {
+        Claims claims = parseClaims(token);
 
         if (claims.get(AUTHORITIES_KEY) == null) {
             throw new CustomAuthException(JsonResultData

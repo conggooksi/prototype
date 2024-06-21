@@ -28,7 +28,7 @@ public class MemberController {
 
   private final MemberService memberService;
 
-  @Operation(summary = "유저 목록 조회 API")
+  @Operation(summary = "회원 목록 조회 API")
   @GetMapping("")
   @ApiResponse(
       responseCode = "200",
@@ -49,7 +49,7 @@ public class MemberController {
         .build();
   }
 
-  @Operation(summary = "유저 조회 API")
+  @Operation(summary = "회원 조회 API")
   @GetMapping("/{member_id}")
   @ApiResponse(
       responseCode = "200",

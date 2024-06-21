@@ -9,6 +9,11 @@
 //import org.springframework.security.web.DefaultSecurityFilterChain;
 //import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 //
+/*
+  .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, redisTemplate), UsernamePasswordAuthenticationFilter.class);
+  SecurityConfig 수정으로 인하여 위의 로직이 필요없어 일단 주석.
+  향후 에러 발생하지 않으면 삭제 예정
+* */
 //@RequiredArgsConstructor
 //public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 //    private final JwtTokenProvider jwtTokenProvider;

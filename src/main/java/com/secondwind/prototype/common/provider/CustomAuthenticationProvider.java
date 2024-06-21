@@ -22,7 +22,7 @@ import java.util.Objects;
 public class CustomAuthenticationProvider implements AuthenticationProvider {
     private final PasswordEncoder passwordEncoder;
     private final CustomUserDetailsService customUserDetailsService;
-    
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String loginId = authentication.getName();
