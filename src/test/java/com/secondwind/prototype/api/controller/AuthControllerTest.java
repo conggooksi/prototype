@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,6 +41,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.MissingRequestHeaderException;
+import org.springframework.web.servlet.View;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -74,6 +77,8 @@ class AuthControllerTest {
       new MediaType(MediaType.APPLICATION_JSON.getType(),
           MediaType.APPLICATION_JSON.getSubtype(),
           StandardCharsets.UTF_8);
+  @Autowired
+  private View error;
 
   @Test
   @Description("회원가입하면 일단 역할은 ROLE_USER로 설정한다.")
@@ -121,7 +126,9 @@ class AuthControllerTest {
             .contentType(contentType)
             .accept(contentType)
             .content(requestBody))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.error.message",
+            is(AuthErrorCode.ENTERED_ID_AND_PASSWORD.getMessage())));
   }
 
   @Test

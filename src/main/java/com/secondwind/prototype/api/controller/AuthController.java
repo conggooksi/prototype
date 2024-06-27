@@ -44,32 +44,25 @@ public class AuthController {
   @Operation(summary = "회원가입 API")
   @PostMapping("/signup")
   public ResponseEntity<?> signup(
-      @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
+      @RequestHeader(value = HttpHeaders.AUTHORIZATION) String authorization,
       @RequestBody SignUpRequest signUpRequest) {
-    if (authorization != null) {
-      String authBasic = authorization.substring(BASIC_PREFIX.length());
-      String decodedAuthBasic = new String(Base64.getDecoder().decode(authBasic),
-          StandardCharsets.UTF_8);
-      String[] authUserInfo = decodedAuthBasic.split(":");
 
-      String loginId = authUserInfo[0];
-      String password = authUserInfo[1];
+    String authBasic = authorization.substring(BASIC_PREFIX.length());
+    String decodedAuthBasic = new String(Base64.getDecoder().decode(authBasic),
+        StandardCharsets.UTF_8);
+    String[] authUserInfo = decodedAuthBasic.split(":");
 
-      signUpRequest.setLoginId(loginId);
-      signUpRequest.setPassword(password);
+    String loginId = authUserInfo[0];
+    String password = authUserInfo[1];
 
-      Long id = authService.signup(signUpRequest);
-      return ResponseHandler.generate()
-          .data(id)
-          .status(HttpStatus.CREATED)
-          .build();
-    } else {
-      return ResponseHandler.failResultGenerate()
-          .errorMessage(AuthErrorCode.ENTERED_ID_AND_PASSWORD.getMessage())
-          .errorCode(AuthErrorCode.ENTERED_ID_AND_PASSWORD.getCode())
-          .status(HttpStatus.BAD_REQUEST)
-          .build();
-    }
+    signUpRequest.setLoginId(loginId);
+    signUpRequest.setPassword(password);
+
+    Long id = authService.signup(signUpRequest);
+    return ResponseHandler.generate()
+        .data(id)
+        .status(HttpStatus.CREATED)
+        .build();
   }
 
   @Operation(summary = "로그인 API")
@@ -84,29 +77,20 @@ public class AuthController {
   )
   public ResponseEntity<?> login(
       @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
-    if (authorization != null) {
-      String authBasic = authorization.substring(BASIC_PREFIX.length());
+    String authBasic = authorization.substring(BASIC_PREFIX.length());
 
-      String decodedAuthBasic = new String(Base64.getDecoder().decode(authBasic),
-          StandardCharsets.UTF_8);
-      String[] authUserInfo = decodedAuthBasic.split(":");
+    String decodedAuthBasic = new String(Base64.getDecoder().decode(authBasic),
+        StandardCharsets.UTF_8);
+    String[] authUserInfo = decodedAuthBasic.split(":");
 
-      String loginId = authUserInfo[0];
-      String password = authUserInfo[1];
+    String loginId = authUserInfo[0];
+    String password = authUserInfo[1];
 
-      TokenDTO tokenDTO = authService.login(loginId, password);
-      return ResponseHandler.generate()
-          .data(tokenDTO)
-          .status(HttpStatus.OK)
-          .build();
-
-    } else {
-      return ResponseHandler.failResultGenerate()
-          .errorMessage(AuthErrorCode.ENTERED_ID_AND_PASSWORD.getMessage())
-          .errorCode(AuthErrorCode.ENTERED_ID_AND_PASSWORD.getCode())
-          .status(HttpStatus.BAD_REQUEST)
-          .build();
-    }
+    TokenDTO tokenDTO = authService.login(loginId, password);
+    return ResponseHandler.generate()
+        .data(tokenDTO)
+        .status(HttpStatus.OK)
+        .build();
   }
 
   @Operation(summary = "토큰 재발급 API")
@@ -155,27 +139,19 @@ public class AuthController {
   )
   public ResponseEntity<?> updatePassword(
       @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
-    if (authorization != null) {
-      String authBasic = authorization.substring(BASIC_PREFIX.length());
-      String decodedAuthBasic = new String(Base64.getDecoder().decode(authBasic),
-          StandardCharsets.UTF_8);
-      String[] authUserInfo = decodedAuthBasic.split(":");
+    String authBasic = authorization.substring(BASIC_PREFIX.length());
+    String decodedAuthBasic = new String(Base64.getDecoder().decode(authBasic),
+        StandardCharsets.UTF_8);
+    String[] authUserInfo = decodedAuthBasic.split(":");
 
-      String loginId = authUserInfo[0];
-      String password = authUserInfo[1];
+    String loginId = authUserInfo[0];
+    String password = authUserInfo[1];
 
-      authService.updatePassword(loginId, password);
+    authService.updatePassword(loginId, password);
 
-      return ResponseHandler.generate()
-          .data(null)
-          .status(HttpStatus.OK)
-          .build();
-    } else {
-      return ResponseHandler.failResultGenerate()
-          .errorMessage(AuthErrorCode.ENTERED_ID_AND_PASSWORD.getMessage())
-          .errorCode(AuthErrorCode.ENTERED_ID_AND_PASSWORD.getCode())
-          .status(HttpStatus.BAD_REQUEST)
-          .build();
-    }
+    return ResponseHandler.generate()
+        .data(null)
+        .status(HttpStatus.OK)
+        .build();
   }
 }
