@@ -1,9 +1,11 @@
 package com.secondwind.prototype.api.controller;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -18,7 +20,9 @@ import com.secondwind.prototype.api.repository.MemberRepository;
 import com.secondwind.prototype.api.service.CustomUserDetailsService;
 import com.secondwind.prototype.common.dto.TokenDTO;
 import com.secondwind.prototype.common.enumerate.Authority;
+import com.secondwind.prototype.common.exception.ApiException;
 import com.secondwind.prototype.common.exception.code.AuthErrorCode;
+import com.secondwind.prototype.common.exception.code.MemberErrorCode;
 import com.secondwind.prototype.common.provider.JwtTokenProvider;
 import jakarta.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +32,7 @@ import java.util.Optional;
 import jdk.jfr.Description;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,6 +40,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -157,6 +163,31 @@ class AuthControllerTest {
   }
 
   @Test
+  void signup_failed_not_enough_password() throws Exception {
+    // given
+    String loginId = "conggooksi";
+    String password = "123";
+    String authBasic = Base64.getEncoder().encodeToString((loginId + ":" + password).getBytes());
+    SignUpRequest signUpRequest = SignUpRequest.of()
+        .name("나다")
+        .build();
+
+    String requestBody = objectMapper.writeValueAsString(signUpRequest);
+    given(memberRepository.existsByLoginIdAndIsDeletedFalse(anyString())).willReturn(true);
+
+    // when & then
+    mockMvc.perform(post("/api/auth/signup")
+            .contentType(contentType)
+            .accept(contentType)
+            .header(HttpHeaders.AUTHORIZATION, "Basic " + authBasic)
+            .content(requestBody))
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            jsonPath("$.error.message",
+                is(AuthErrorCode.PASSWORD_NOT_ENOUGH_CONDITION.getMessage())));
+  }
+
+  @Test
   void login_success() throws Exception {
     // given
     String loginId = "conggooksi";
@@ -270,6 +301,54 @@ class AuthControllerTest {
   }
 
   @Test
+  void reissue_failed_invalid_token() throws Exception {
+    // given
+    given(jwtTokenProvider.validateToken(anyString()))
+        .willReturn(false);
+
+    TokenRequestDTO tokenRequestDTO = new TokenRequestDTO("accessToken", "refreshToken");
+
+    // when & then
+    mockMvc.perform(
+            post("/api/auth/reissue")
+                .contentType(contentType)
+                .accept(contentType)
+                .content(objectMapper.writeValueAsString(tokenRequestDTO)))
+        .andExpect(status().isUnauthorized())
+        .andExpect(
+            jsonPath("$.error.message",
+                is(AuthErrorCode.INVALID_TOKEN.getMessage())));
+  }
+
+  @Test
+  void reissue_failed_not_match_token_info() throws Exception {
+    // given
+    String refreshToken = "refreshToken";
+
+    given(redisTemplate.opsForValue()).willReturn(valueOperations);
+    given(redisTemplate.opsForValue().get(anyString()))
+        .willReturn(refreshToken);
+    given(jwtTokenProvider.validateToken(anyString()))
+        .willReturn(true);
+
+    TokenRequestDTO tokenRequestDTO
+        = new TokenRequestDTO(
+            "accessToken",
+        "wrongToken");
+
+    // when & then
+    mockMvc.perform(
+            post("/api/auth/reissue")
+                .contentType(contentType)
+                .accept(contentType)
+                .content(objectMapper.writeValueAsString(tokenRequestDTO)))
+        .andExpect(status().isUnauthorized())
+        .andExpect(
+            jsonPath("$.error.message",
+                is(AuthErrorCode.NOT_MATCH_TOKEN_INFO.getMessage())));
+  }
+
+  @Test
   void logoutTest() throws Exception{
     // given
     TokenRequestDTO tokenRequestDTO =
@@ -302,7 +381,7 @@ class AuthControllerTest {
     String password = "asdf";
     String authBasic = Base64.getEncoder().encodeToString((loginId + ":" + password).getBytes());
 
-    given(memberRepository.findByLoginId(anyString()))
+    given(memberRepository.findByLoginIdAndIsDeletedFalse(anyString()))
         .willReturn(Optional.ofNullable(Member.of()
             .id(1L)
             .loginId(loginId)
@@ -318,5 +397,53 @@ class AuthControllerTest {
                 .accept(contentType)
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + authBasic))
         .andExpect(status().isOk());
+  }
+
+  @Test
+  void logout_failed_invalid_token() throws Exception {
+    // given
+    given(jwtTokenProvider.validateToken(anyString()))
+        .willReturn(false);
+
+    TokenRequestDTO tokenRequestDTO = new TokenRequestDTO("accessToken", "refreshToken");
+
+    // when & then
+    mockMvc.perform(
+            post("/api/auth/logout")
+                .contentType(contentType)
+                .accept(contentType)
+                .content(objectMapper.writeValueAsString(tokenRequestDTO)))
+        .andExpect(status().isUnauthorized())
+        .andExpect(
+            jsonPath("$.error.message",
+                is(AuthErrorCode.INVALID_TOKEN.getMessage())));
+  }
+
+  @Test
+  void updatePassword_failed_member_not_found() throws Exception {
+    // given
+    String loginId = "conggooksi";
+    String password = "asdf";
+    String authBasic = Base64.getEncoder().encodeToString((loginId + ":" + password).getBytes());
+
+    when(memberRepository.findByLoginIdAndIsDeletedFalse(loginId))
+        .thenReturn(Optional.empty());
+
+    // When & Then
+//    ApiException thrown = assertThrows(ApiException.class, () -> {
+//      memberRepository.findByLoginIdAndIsDeletedFalse(loginId);
+//    });
+
+    // when & then
+    mockMvc.perform(
+            patch("/api/auth/password")
+                .contentType(contentType)
+                .accept(contentType)
+                .header(HttpHeaders.AUTHORIZATION, "Basic " + authBasic))
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            jsonPath("$.error.message",
+                is(MemberErrorCode.MEMBER_NOT_FOUND.getMessage())));
+
   }
 }

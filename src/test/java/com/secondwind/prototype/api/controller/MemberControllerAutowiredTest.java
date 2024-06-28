@@ -1,0 +1,122 @@
+package com.secondwind.prototype.api.controller;
+
+
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.secondwind.prototype.api.domain.entity.Member;
+import com.secondwind.prototype.api.domain.request.SearchMember;
+import com.secondwind.prototype.api.domain.response.MemberResponse;
+import com.secondwind.prototype.api.repository.MemberRepository;
+import com.secondwind.prototype.api.service.MemberService;
+import com.secondwind.prototype.common.annotation.WithMockTestUser;
+import com.secondwind.prototype.common.enumerate.Authority;
+import com.secondwind.prototype.common.exception.code.MemberErrorCode;
+import jakarta.transaction.Transactional;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.web.servlet.MockMvc;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
+@Slf4j
+class MemberControllerAutowiredTest {
+
+  @Autowired
+  private MockMvc mockMvc;
+
+  @Autowired
+  private MemberRepository memberRepository;
+
+  @Autowired
+  private MemberService memberService;
+
+  private ObjectMapper objectMapper = new ObjectMapper();
+
+  @Autowired
+  private PasswordEncoder passwordEncoder;
+
+  protected MediaType contentType =
+      new MediaType(MediaType.APPLICATION_JSON.getType(),
+          MediaType.APPLICATION_JSON.getSubtype(),
+          StandardCharsets.UTF_8);
+
+  @Test
+//  @WithMockTestUser(loginId = "conggooksi", password = "1234", authority = Authority.ROLE_ADMIN)
+  void getMembers() throws Exception {
+    // given
+//    Member member1 = Member.of()
+//        .id(1L)
+//        .loginId("conggooksi1")
+//        .password(passwordEncoder.encode("1234"))
+//        .name("conggooksi1")
+//        .authority(Authority.ROLE_USER)
+//        .isDeleted(false)
+//        .build();
+//    Member member2 = Member.of()
+//        .id(2L)
+//        .loginId("conggooksi2")
+//        .password(passwordEncoder.encode("1234"))
+//        .name("conggooksi2")
+//        .authority(Authority.ROLE_USER)
+//        .isDeleted(false)
+//        .build();
+//    Member member3 = Member.of()
+//        .id(3L)
+//        .loginId("conggooksi3")
+//        .password(passwordEncoder.encode("1234"))
+//        .name("conggooksi3")
+//        .authority(Authority.ROLE_USER)
+//        .isDeleted(false)
+//        .build();
+//    MemberResponse memberResponse1 = MemberResponse.toResponse(member1);
+//    memberResponse1.setCreatedAt(LocalDateTime.now());
+//    memberResponse1.setUpdatedAt(LocalDateTime.now());
+//    MemberResponse memberResponse2 = MemberResponse.toResponse(member2);
+//    memberResponse2.setCreatedAt(LocalDateTime.now());
+//    memberResponse2.setUpdatedAt(LocalDateTime.now());
+//    MemberResponse memberResponse3 = MemberResponse.toResponse(member3);
+//    memberResponse3.setCreatedAt(LocalDateTime.now());
+//    memberResponse3.setUpdatedAt(LocalDateTime.now());
+//    memberRepository.saveAll(List.of(member1, member2, member3));
+
+//    Page<MemberResponse> memberResponses = new PageImpl<>(
+//        List.of(memberResponse1, memberResponse2, memberResponse3));
+//    SearchMember searchMember = new SearchMember(10, 0, "id", Direction.ASC, null, null);
+//    PageRequest pageRequest = PageRequest.of(searchMember.getOffset(), searchMember.getLimit(),
+//        searchMember.getDirection(), searchMember.getOrderBy());
+
+//    given(memberRepository.searchMembers(any(SearchMember.class), any(PageRequest.class)))
+//        .willReturn(memberResponses);
+
+    // when & then
+    mockMvc.perform(
+            get("/api/members")
+                .contentType(contentType)
+                .accept(contentType))
+        .andExpect(status().isOk());
+
+//    verify(memberRepository, times(1)).searchMembers(searchMember, pageRequest);
+  }
+}

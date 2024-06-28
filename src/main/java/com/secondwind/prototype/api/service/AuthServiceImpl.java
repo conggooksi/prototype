@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -101,11 +102,12 @@ public class AuthServiceImpl implements AuthService {
 
   @Override
   public void updatePassword(String loginId, String password) {
-    Member member = memberRepository.findByLoginId(loginId)
+    Member member = memberRepository.findByLoginIdAndIsDeletedFalse(loginId)
         .orElseThrow(
             () -> ApiException.builder()
                 .errorCode(MemberErrorCode.MEMBER_NOT_FOUND.getCode())
                 .errorMessage(MemberErrorCode.MEMBER_NOT_FOUND.getMessage())
+                .status(HttpStatus.BAD_REQUEST)
                 .build());
 
     member.changePassword(passwordEncoder.encode(password));

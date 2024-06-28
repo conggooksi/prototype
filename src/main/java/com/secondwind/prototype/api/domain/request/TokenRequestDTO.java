@@ -2,9 +2,9 @@ package com.secondwind.prototype.api.domain.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @AllArgsConstructor
 public class TokenRequestDTO {
   @NotBlank(message = "잘못된 요청입니다.")

@@ -1,9 +1,12 @@
 package com.secondwind.prototype.common.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.domain.Sort;
 
-@Data
+
+@Getter
+@Setter
 public class PaginationDto {
     private Integer limit;
     private Integer offset;

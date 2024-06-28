@@ -13,10 +13,12 @@ import static org.mockito.Mockito.verify;
 
 import com.secondwind.prototype.api.domain.entity.Member;
 import com.secondwind.prototype.api.domain.entity.MemberMock;
+import com.secondwind.prototype.api.domain.request.SearchMember;
 import com.secondwind.prototype.api.domain.request.SignUpRequest;
 import com.secondwind.prototype.api.domain.response.MemberResponse;
 import com.secondwind.prototype.api.domain.spec.PasswordSpecification;
 import com.secondwind.prototype.api.repository.MemberRepository;
+import com.secondwind.prototype.common.enumerate.Authority;
 import com.secondwind.prototype.common.exception.CustomAuthException;
 import com.secondwind.prototype.common.exception.code.AuthErrorCode;
 import java.lang.reflect.Field;
@@ -27,6 +29,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,7 +57,7 @@ class MemberServiceImplTest {
     // given
     SignUpRequest signUpRequest = new SignUpRequest("conggooksi", "1234", "나다");
     Member member = MemberMock.createMember(signUpRequest);
-    given(memberRepository.findById(anyLong()))
+    given(memberRepository.findByIdAndIsDeletedFalse(anyLong()))
         .willReturn(Optional.of(member));
 
     // when

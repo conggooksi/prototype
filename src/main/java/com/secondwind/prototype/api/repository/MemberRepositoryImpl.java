@@ -26,15 +26,20 @@ public class MemberRepositoryImpl extends Querydsl4RepositorySupport implements
             contentQuery.select(Projections.constructor(MemberResponse.class,
                     member.id,
                     member.loginId,
-                    member.name))
+                    member.name,
+                    member.authority,
+                    member.createdAt,
+                    member.updatedAt))
                 .from(member)
                 .where(loginIdEq(searchMember.getLoginId()),
-                    nameEq(searchMember.getName())),
+                    nameEq(searchMember.getName()),
+                    member.isDeleted.eq(false)),
         countQuery ->
             countQuery.select(member.count())
                 .from(member)
                 .where(loginIdEq(searchMember.getLoginId()),
-                    nameEq(searchMember.getName())));
+                    nameEq(searchMember.getName()),
+                    member.isDeleted.eq(false)));
   }
 
   private BooleanExpression nameEq(String name) {

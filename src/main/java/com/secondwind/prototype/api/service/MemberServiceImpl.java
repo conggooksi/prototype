@@ -29,7 +29,7 @@ public class MemberServiceImpl implements MemberService{
 
   @Override
   public MemberResponse getMember(Long memberId) {
-    Member member = memberRepository.findById(memberId)
+    Member member = memberRepository.findByIdAndIsDeletedFalse(memberId)
         .orElseThrow(
             () -> ApiException.builder()
                 .errorMessage(MemberErrorCode.MEMBER_NOT_FOUND.getMessage())

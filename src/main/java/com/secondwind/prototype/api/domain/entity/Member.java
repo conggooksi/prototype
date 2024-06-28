@@ -1,5 +1,6 @@
 package com.secondwind.prototype.api.domain.entity;
 
+import com.secondwind.prototype.common.entity.BaseEntity;
 import com.secondwind.prototype.common.enumerate.Authority;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
